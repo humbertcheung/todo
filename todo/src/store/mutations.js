@@ -4,7 +4,7 @@
  * @Author: Humbert Cheung
  * @Date: 2022-04-03 23:18:40
  * @LastEditors: [Humbert Cheung]
- * @LastEditTime: 2022-04-03 23:18:41
+ * @LastEditTime: 2022-04-19 16:39:06
  * @FilePath: /todo/src/store/mutations.js
  * Copyright (C) 2022 syzhang. All rights reserved.
  */
@@ -29,6 +29,14 @@ const mutations = { // 更改状态
   // id自增
   ID_INCREMENT(state) {
     state.tId++
+  },
+  // 修改Item
+  MODIFY_ITEM(state, itemObj) {
+    state.allItems.forEach(item => {
+      if (item.tId === itemObj.taskId) {
+        item.taskContent = itemObj.taskContent
+      }
+    })
   }
 }
 

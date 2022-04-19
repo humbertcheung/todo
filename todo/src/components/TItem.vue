@@ -4,27 +4,32 @@
  * @Author: Humbert Cheung
  * @Date: 2022-03-21 14:37:58
  * @LastEditors: [Humbert Cheung]
- * @LastEditTime: 2022-03-31 22:34:23
+ * @LastEditTime: 2022-04-19 16:41:45
  * @FilePath: /todo/src/components/TItem.vue
  * Copyright (C) 2022 syzhang. All rights reserved.
 -->
 <template>
   <div class="container">
     <div class="box">
+      <input type="checkbox" id="item" v-model="isComplete" @change="statusChange" />
       <input
-        type="checkbox"
-        id="item"
-        v-model="isComplete"
-        @change="statusChange"
+        type="text"
+        class="editor"
+        v-model="newContent"
+        v-if="isEdit"
+        @keyup.enter="modifyCompleted(taskId)"
+        @blur="modifyCompleted(taskId)"
       />
-      <label class="item-title" :style="labelStyle">{{ taskContent }}</label>
-      <span class="delete" @click.stop="DEL_ITEM({taskId})"></span>
+      <label class="item-title" :style="labelStyle" v-else @dblclick="modifyOnclick">
+        {{ taskContent }}
+      </label>
+      <span class="delete" @click.stop="DEL_ITEM({ taskId })"></span>
     </div>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions } from "vuex";
 
 export default {
   name: "TItem",
@@ -37,21 +42,38 @@ export default {
     return {
       // item的状态
       isComplete: this.taskComplete,
+      isEdit: false, // 标签是否为编辑模式
+      newContent: "",
     };
   },
   methods: {
     // 通过辅助函数映射 store 中的 actions
-    ...mapActions([
-      'CHANGE_STATUS',
-      'DEL_ITEM'
-    ]),
+    ...mapActions(["CHANGE_STATUS", "DEL_ITEM", "MODIFY_ITEM"]),
     // 用户点击复选框，修改状态时触发此方法
     statusChange() {
       const para = {
         status: this.isComplete,
         id: this.taskId,
       };
-      this.CHANGE_STATUS(para)
+      this.CHANGE_STATUS(para);
+    },
+    modifyOnclick() {
+      this.isEdit = true;
+      this.newContent = this.taskContent;
+    },
+    modifyCompleted(taskId) {
+      // 结束编辑
+      this.isEdit = false;
+      // 更新数据
+      if (this.newContent === this.taskContent || this.newContent == "") {
+        // 内容未修改
+        return;
+      }
+      const para = {
+        taskId,
+        taskContent: this.newContent,
+      };
+      this.MODIFY_ITEM(para);
     },
   },
   computed: {
@@ -86,6 +108,7 @@ export default {
     #item {
       margin-right: 20px;
     }
+    .editor,
     .item-title {
       margin-right: 20px;
       width: 100%;

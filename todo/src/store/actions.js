@@ -4,7 +4,7 @@
  * @Author: Humbert Cheung
  * @Date: 2022-04-03 23:16:27
  * @LastEditors: [Humbert Cheung]
- * @LastEditTime: 2022-04-03 23:27:51
+ * @LastEditTime: 2022-04-19 16:39:30
  * @FilePath: /todo/src/store/actions.js
  * Copyright (C) 2022 syzhang. All rights reserved.
  */
@@ -24,6 +24,10 @@ const actions = { // 提交 mutation
   // id自增
   ID_INCREMENT({ commit }) {
     commit('ID_INCREMENT')
+  },
+  // 提交编辑 item的 mutation
+  MODIFY_ITEM({ commit }, itemObj) {
+    commit('MODIFY_ITEM', itemObj)
   }
 }
 
